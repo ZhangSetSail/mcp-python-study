@@ -10,11 +10,11 @@ RUN curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releas
     ls -la ~/.cargo/bin/ || echo "~/.cargo/bin/ not exists" && \
     which uv || echo "uv not in PATH"
 
-# 直接使用pip代替uv创建虚拟环境
+# 直接使用pip代替uv创建虚拟环境，安装所有需要的依赖
 RUN python -m venv /app/.venv && \
     . /app/.venv/bin/activate && \
     pip install --upgrade pip && \
-    pip install streamlit anthropic python-dotenv mcp
+    pip install mcp anthropic python-dotenv streamlit openai
 
 # 复制项目文件
 COPY . /app/
