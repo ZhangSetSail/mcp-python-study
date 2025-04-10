@@ -1,0 +1,16 @@
+# 核心依赖
+streamlit>=1.32.0
+openai>=1.12.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+langchain>=0.1.4
+# 不指定langchain-core版本，让pip自动解决依赖关系
+
+# 工具和集成
+pydantic>=2.5.0
+aiohttp>=3.9.0
+asyncio>=3.4.3
+
+# 实用工具
+tqdm>=4.66.0
+colorama>=0.4.6

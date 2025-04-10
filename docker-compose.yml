@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  travel-assistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: travel-assistant
+    ports:
+      - "8501:8501"  # Streamlit端口
+    environment:
+      - AMAP_MAPS_API_KEY=${AMAP_MAPS_API_KEY}
+    volumes:
+      - ./data:/app/data  # 可选：用于持久化数据
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
