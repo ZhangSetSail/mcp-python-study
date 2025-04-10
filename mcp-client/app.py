@@ -147,7 +147,7 @@ with st.sidebar:
     # 设置MCP服务器路径
     mcp_server_path = st.text_input(
         "MCP服务器路径", 
-        value="../amap-mcp/amap-maps-mcp-server.js"
+        value="/app/amap-mcp/amap-maps-mcp-server.js"
     )
     
     # 连接按钮
