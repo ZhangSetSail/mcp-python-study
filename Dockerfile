@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     git \
+    build-essential \
     && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
@@ -18,19 +19,35 @@ RUN apt-get update && apt-get install -y \
 COPY mcp-client/ /app/mcp-client/
 COPY amap-mcp/ /app/amap-mcp/
 COPY requirements.txt /app/
+COPY pyproject.toml /app/
+COPY uv.lock /app/
 
-# 安装Python依赖
-RUN pip install --no-cache-dir -r requirements.txt
+# 安装uv
+RUN curl -sSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.cargo/bin:${PATH}"
 
-# 安装MCP模块
-RUN pip install git+https://github.com/microsoft/mcp.git
+# 使用uv安装Python依赖
+RUN uv pip install -r requirements.txt
 
-# 如果上述安装失败，尝试创建一个简单的MCP模块
-RUN mkdir -p /app/mcp && \
-    echo 'class ClientSession:\n    async def list_tools(self):\n        return []\n\nclass StdioServerParameters:\n    def __init__(self, *args, **kwargs):\n        pass' > /app/mcp/__init__.py && \
-    echo 'def stdio_client(*args, **kwargs):\n    pass' > /app/mcp/client/__init__.py && \
-    mkdir -p /app/mcp/client/stdio && \
-    echo 'def stdio_client(*args, **kwargs):\n    pass' > /app/mcp/client/stdio/__init__.py && \
+# 创建一个简单的MCP模块
+RUN mkdir -p /app/mcp/client/stdio && \
+    echo '\
+class ClientSession:\n\
+    async def list_tools(self):\n\
+        return []\n\
+\n\
+class StdioServerParameters:\n\
+    def __init__(self, *args, **kwargs):\n\
+        pass\n\
+' > /app/mcp/__init__.py && \
+    echo '\
+def stdio_client(*args, **kwargs):\n\
+    pass\n\
+' > /app/mcp/client/__init__.py && \
+    echo '\
+def stdio_client(*args, **kwargs):\n\
+    pass\n\
+' > /app/mcp/client/stdio/__init__.py && \
     touch /app/mcp/client/stdio/py.typed
 
 # 安装高德地图MCP服务器依赖
