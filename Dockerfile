@@ -24,10 +24,15 @@ COPY uv.lock /app/
 
 # 安装uv
 RUN curl -sSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:${PATH}"
+# 确保路径正确设置
+ENV PATH="/root/.cargo/bin:/root/.uv/bin:${PATH}"
+# 验证uv安装
+RUN ls -la /root/.cargo/bin || echo "cargo bin not found" && \
+    ls -la /root/.uv/bin || echo "uv bin not found" && \
+    which uv || echo "uv not in PATH"
 
-# 使用uv安装Python依赖
-RUN uv pip install -r requirements.txt
+# 使用pip安装Python依赖
+RUN pip install --no-cache-dir -r requirements.txt
 
 # 创建一个简单的MCP模块
 RUN mkdir -p /app/mcp/client/stdio && \
